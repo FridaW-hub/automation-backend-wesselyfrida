@@ -12,13 +12,26 @@ const payload = {
     "price":"4590"
 }
 
-const payloadChange = {
-    "features":["balcony","sea_view"],
-    "category":"double",
-    "number":"5113",
-    "floor":"6",
-    "available":false,
-    "price":"5590"
+//const payloadChange = {
+//    "features":["balcony","sea_view"],
+//    "category":"double",
+//    "number":"5113",
+//    "floor":"6",
+//    "available":false,
+//    "price":"5590"
+//}
+
+function payloadChange (roomId){
+ const   payloadChangeConst = {
+        "features":["balcony","sea_view"],
+        "category":"double",
+        "number":"5113",
+        "floor":"6",
+        "available":false,
+        "price":"5590",
+        "id": roomId
+    }
+    return payloadChangeConst
 }
 
 function logoutAssertRequest(cy){
@@ -36,6 +49,7 @@ function logoutAssertRequest(cy){
 }
 
 function editRoomAssertRequest(cy, roomId){
+    const localPayloadChange = payloadChange(roomId)
     cy.request({
         method: "PUT",
         url: ROOM_URL+roomId,
@@ -43,22 +57,23 @@ function editRoomAssertRequest(cy, roomId){
             'X-User-Auth': JSON.stringify(Cypress.env().loginToken),    
             'Content-Type': 'application/json',
         },
-        body:payloadChange
+        body:localPayloadChange
+        
 
     }).then((response =>{
         expect(response.status).to.eq(200)
         const responseCategory = JSON.stringify(response.body.category)
-        expect(responseCategory).to.have.string(payloadChange.category)
+        expect(responseCategory).to.have.string(localPayloadChange.category)
         const responseNumber = JSON.stringify(response.body.number)
-        expect(responseNumber).to.have.string(payloadChange.number)
+        expect(responseNumber).to.have.string(localPayloadChange.number)
         const responseFloor = JSON.stringify(response.body.floor)
-        expect(responseFloor).to.have.string(payloadChange.floor)
+        expect(responseFloor).to.have.string(localPayloadChange.floor)
         const responseAvailable = JSON.stringify(response.body.available)
-        expect(responseAvailable).to.have.string(payloadChange.available)
+        expect(responseAvailable).to.have.string(localPayloadChange.available)
         const responsePrice = JSON.stringify(response.body.price)
-        expect(responsePrice).to.have.string(payloadChange.price)
+        expect(responsePrice).to.have.string(localPayloadChange.price)
         const responseFeatures = response.body.features
-        expect(responseFeatures).to.deep.equal(payloadChange.features)
+        expect(responseFeatures).to.deep.equal(localPayloadChange.features)
 
 
     }))
