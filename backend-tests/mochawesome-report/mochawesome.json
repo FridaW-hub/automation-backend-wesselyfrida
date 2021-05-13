@@ -1,15 +1,15 @@
 {
   "stats": {
     "suites": 1,
-    "tests": 1,
+    "tests": 4,
     "passes": 1,
     "pending": 0,
-    "failures": 0,
-    "start": "2021-05-10T14:33:33.981Z",
-    "end": "2021-05-10T14:33:34.678Z",
-    "duration": 697,
-    "testsRegistered": 1,
-    "passPercent": 100,
+    "failures": 3,
+    "start": "2021-05-11T15:30:28.528Z",
+    "end": "2021-05-11T15:30:31.531Z",
+    "duration": 3003,
+    "testsRegistered": 4,
+    "passPercent": 25,
     "pendingPercent": 0,
     "other": 0,
     "hasOther": false,
@@ -18,7 +18,7 @@
   },
   "results": [
     {
-      "uuid": "9bce7a27-5a97-453c-9362-0b7858ddc752",
+      "uuid": "ec0da71b-f727-4730-86d7-1ac24835babc",
       "title": "",
       "fullFile": "cypress/integration/backend-test.spec.js",
       "file": "cypress/integration/backend-test.spec.js",
@@ -27,40 +27,110 @@
       "tests": [],
       "suites": [
         {
-          "uuid": "b50bee35-0e83-404c-b113-05a5557ea884",
-          "title": "testing auth",
+          "uuid": "44d3b315-2dea-4f76-81ce-1810114f0f41",
+          "title": "Testing hotel",
           "fullFile": "",
           "file": "",
           "beforeHooks": [],
           "afterHooks": [],
           "tests": [
             {
-              "title": "tc-create then edit room",
-              "fullTitle": "testing auth tc-create then edit room",
+              "title": "TC-Create a new room",
+              "fullTitle": "Testing hotel TC-Create a new room",
               "timedOut": null,
-              "duration": 672,
+              "duration": 606,
               "state": "passed",
               "speed": "slow",
               "pass": true,
               "fail": false,
               "pending": false,
               "context": null,
-              "code": "cy.authenticateSession().then(response => {\n  const payload = {\n    \"features\": [\"balcony\", \"sea_view\"],\n    \"category\": \"double\",\n    \"number\": \"5113\",\n    \"floor\": \"6\",\n    \"available\": true,\n    \"price\": \"4590\"\n  };\n  const payloadChange = {\n    \"features\": [\"balcony\", \"sea_view\"],\n    \"category\": \"double\",\n    \"number\": \"5113\",\n    \"floor\": \"6\",\n    \"available\": false,\n    \"price\": \"5590\"\n  };\n  cy.request({\n    method: \"POST\",\n    url: NEW_ROOM_URL,\n    headers: {\n      'X-User-Auth': JSON.stringify(Cypress.env().loginToken),\n      'Content-Type': 'application/json'\n    },\n    body: payload\n  }).then(response => {\n    cy.log(response.body.id);\n    let roomId = response.body.id; //let roomId = response.body[response.body.length -1].id\n    cy.request({\n      method: \"PUT\",\n      url: ROOM_URL + roomId,\n      headers: {\n        'X-User-Auth': JSON.stringify(Cypress.env().loginToken),\n        'Content-Type': 'application/json'\n      },\n      body: payloadChange\n    }).then(response => {\n      const responseCategory = JSON.stringify(response.body.category);\n      expect(responseCategory).to.have.string(payloadChange.category);\n      const responseNumber = JSON.stringify(response.body.number);\n      expect(responseNumber).to.have.string(payloadChange.number);\n      const responseFloor = JSON.stringify(response.body.floor);\n      expect(responseFloor).to.have.string(payloadChange.floor);\n      const responseAvailable = JSON.stringify(response.body.available);\n      expect(responseAvailable).to.have.string(payloadChange.available);\n      const responsePrice = JSON.stringify(response.body.price);\n      expect(responsePrice).to.have.string(payloadChange.price);\n      const responseFeatures = response.body.features;\n      expect(responseFeatures).to.deep.equal(payloadChange.features);\n      cy.request({\n        method: \"POST\",\n        url: LOGOUT_URL,\n        headers: {\n          'X-User-Auth': JSON.stringify(Cypress.env().loginToken),\n          'Content-Type': 'application/json'\n        }\n      }).then(response => {\n        expect(response.body).to.equal('OK');\n      });\n    });\n  });\n});",
+              "code": "clientHelpers.createRoomAssertRequest(cy);",
               "err": {},
-              "uuid": "c87db3c1-377f-421b-9e85-b6ae1bed22e0",
-              "parentUUID": "b50bee35-0e83-404c-b113-05a5557ea884",
+              "uuid": "ff5c868c-3da1-4f2c-906d-bcdf6a34ec4d",
+              "parentUUID": "44d3b315-2dea-4f76-81ce-1810114f0f41",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "TC-Create a new room and edit",
+              "fullTitle": "Testing hotel TC-Create a new room and edit",
+              "timedOut": null,
+              "duration": 797,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "clientHelpers.createRoomThenEditRequest(cy);",
+              "err": {
+                "message": "CypressError: `cy.request()` failed on:\n\nhttp://localhost:3000/api/room/null\n\nThe response we received from your web server was:\n\n  > 401: Unauthorized\n\nThis was considered a failure because the status code was not `2xx` or `3xx`.\n\nIf you do not want status codes to cause failures pass the option: `failOnStatusCode: false`\n\n-----------------------------------------------------------\n\nThe request we sent was:\n\nMethod: PUT\nURL: http://localhost:3000/api/room/null\nHeaders: {\n  \"Connection\": \"keep-alive\",\n  \"X-User-Auth\": \"{\\\"username\\\":\\\"tester01\\\",\\\"token\\\":\\\"0dbd7fee7edac09eff000fd45b8c6537\\\"}\",\n  \"Content-Type\": \"application/json\",\n  \"user-agent\": \"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/7.2.0 Chrome/89.0.4328.0 Electron/12.0.0-beta.14 Safari/537.36\",\n  \"accept\": \"*/*\",\n  \"accept-encoding\": \"gzip, deflate\",\n  \"content-length\": 116\n}\nBody: {\"features\":[\"balcony\",\"sea_view\"],\"category\":\"double\",\"number\":\"5113\",\"floor\":\"6\",\"available\":false,\"price\":\"5590\"}\n\n-----------------------------------------------------------\n\nThe response we got was:\n\nStatus: 401 - Unauthorized\nHeaders: {\n  \"x-powered-by\": \"Express\",\n  \"access-control-allow-origin\": \"*\",\n  \"access-control-allow-headers\": \"Origin, X-Requested-With, Content-Type, Accept\",\n  \"content-type\": \"text/plain; charset=utf-8\",\n  \"content-length\": \"12\",\n  \"etag\": \"W/\\\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\\\"\",\n  \"date\": \"Tue, 11 May 2021 15:30:29 GMT\",\n  \"connection\": \"keep-alive\",\n  \"keep-alive\": \"timeout=5\"\n}\nBody: Unauthorized\n\n\nhttps://on.cypress.io/request",
+                "estack": "CypressError: `cy.request()` failed on:\n\nhttp://localhost:3000/api/room/null\n\nThe response we received from your web server was:\n\n  > 401: Unauthorized\n\nThis was considered a failure because the status code was not `2xx` or `3xx`.\n\nIf you do not want status codes to cause failures pass the option: `failOnStatusCode: false`\n\n-----------------------------------------------------------\n\nThe request we sent was:\n\nMethod: PUT\nURL: http://localhost:3000/api/room/null\nHeaders: {\n  \"Connection\": \"keep-alive\",\n  \"X-User-Auth\": \"{\\\"username\\\":\\\"tester01\\\",\\\"token\\\":\\\"0dbd7fee7edac09eff000fd45b8c6537\\\"}\",\n  \"Content-Type\": \"application/json\",\n  \"user-agent\": \"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/7.2.0 Chrome/89.0.4328.0 Electron/12.0.0-beta.14 Safari/537.36\",\n  \"accept\": \"*/*\",\n  \"accept-encoding\": \"gzip, deflate\",\n  \"content-length\": 116\n}\nBody: {\"features\":[\"balcony\",\"sea_view\"],\"category\":\"double\",\"number\":\"5113\",\"floor\":\"6\",\"available\":false,\"price\":\"5590\"}\n\n-----------------------------------------------------------\n\nThe response we got was:\n\nStatus: 401 - Unauthorized\nHeaders: {\n  \"x-powered-by\": \"Express\",\n  \"access-control-allow-origin\": \"*\",\n  \"access-control-allow-headers\": \"Origin, X-Requested-With, Content-Type, Accept\",\n  \"content-type\": \"text/plain; charset=utf-8\",\n  \"content-length\": \"12\",\n  \"etag\": \"W/\\\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\\\"\",\n  \"date\": \"Tue, 11 May 2021 15:30:29 GMT\",\n  \"connection\": \"keep-alive\",\n  \"keep-alive\": \"timeout=5\"\n}\nBody: Unauthorized\n\n\nhttps://on.cypress.io/request\n    at http://localhost:33133/__cypress/runner/cypress_runner.js:139756:21\n    at tryCatcher (http://localhost:33133/__cypress/runner/cypress_runner.js:10791:23)\n    at Promise._settlePromiseFromHandler (http://localhost:33133/__cypress/runner/cypress_runner.js:8726:31)\n    at Promise._settlePromise (http://localhost:33133/__cypress/runner/cypress_runner.js:8783:18)\n    at Promise._settlePromise0 (http://localhost:33133/__cypress/runner/cypress_runner.js:8828:10)\n    at Promise._settlePromises (http://localhost:33133/__cypress/runner/cypress_runner.js:8908:18)\n    at _drainQueueStep (http://localhost:33133/__cypress/runner/cypress_runner.js:5498:12)\n    at _drainQueue (http://localhost:33133/__cypress/runner/cypress_runner.js:5491:9)\n    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (http://localhost:33133/__cypress/runner/cypress_runner.js:5507:5)\n    at Async.drainQueues (http://localhost:33133/__cypress/runner/cypress_runner.js:5377:14)\nFrom Your Spec Code:\n    at Context.eval (http://localhost:33133/__cypress/tests?p=cypress/support/index.js:139:5)",
+                "diff": null
+              },
+              "uuid": "ccb25d0a-a7d2-4425-9047-8c59ca1af787",
+              "parentUUID": "44d3b315-2dea-4f76-81ce-1810114f0f41",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "TC-Create a new room and view",
+              "fullTitle": "Testing hotel TC-Create a new room and view",
+              "timedOut": null,
+              "duration": 745,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "clientHelpers.createRoomViewAssertRequest(cy);",
+              "err": {
+                "message": "CypressError: `cy.request()` failed on:\n\nhttp://localhost:3000/api/room/null\n\nThe response we received from your web server was:\n\n  > 401: Unauthorized\n\nThis was considered a failure because the status code was not `2xx` or `3xx`.\n\nIf you do not want status codes to cause failures pass the option: `failOnStatusCode: false`\n\n-----------------------------------------------------------\n\nThe request we sent was:\n\nMethod: PUT\nURL: http://localhost:3000/api/room/null\nHeaders: {\n  \"Connection\": \"keep-alive\",\n  \"X-User-Auth\": \"{\\\"username\\\":\\\"tester01\\\",\\\"token\\\":\\\"5620fbbe94b5c426063697ded45a2262\\\"}\",\n  \"Content-Type\": \"application/json\",\n  \"user-agent\": \"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/7.2.0 Chrome/89.0.4328.0 Electron/12.0.0-beta.14 Safari/537.36\",\n  \"accept\": \"*/*\",\n  \"accept-encoding\": \"gzip, deflate\",\n  \"content-length\": 116\n}\nBody: {\"features\":[\"balcony\",\"sea_view\"],\"category\":\"double\",\"number\":\"5113\",\"floor\":\"6\",\"available\":false,\"price\":\"5590\"}\n\n-----------------------------------------------------------\n\nThe response we got was:\n\nStatus: 401 - Unauthorized\nHeaders: {\n  \"x-powered-by\": \"Express\",\n  \"access-control-allow-origin\": \"*\",\n  \"access-control-allow-headers\": \"Origin, X-Requested-With, Content-Type, Accept\",\n  \"content-type\": \"text/plain; charset=utf-8\",\n  \"content-length\": \"12\",\n  \"etag\": \"W/\\\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\\\"\",\n  \"date\": \"Tue, 11 May 2021 15:30:30 GMT\",\n  \"connection\": \"keep-alive\",\n  \"keep-alive\": \"timeout=5\"\n}\nBody: Unauthorized\n\n\nhttps://on.cypress.io/request",
+                "estack": "CypressError: `cy.request()` failed on:\n\nhttp://localhost:3000/api/room/null\n\nThe response we received from your web server was:\n\n  > 401: Unauthorized\n\nThis was considered a failure because the status code was not `2xx` or `3xx`.\n\nIf you do not want status codes to cause failures pass the option: `failOnStatusCode: false`\n\n-----------------------------------------------------------\n\nThe request we sent was:\n\nMethod: PUT\nURL: http://localhost:3000/api/room/null\nHeaders: {\n  \"Connection\": \"keep-alive\",\n  \"X-User-Auth\": \"{\\\"username\\\":\\\"tester01\\\",\\\"token\\\":\\\"5620fbbe94b5c426063697ded45a2262\\\"}\",\n  \"Content-Type\": \"application/json\",\n  \"user-agent\": \"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/7.2.0 Chrome/89.0.4328.0 Electron/12.0.0-beta.14 Safari/537.36\",\n  \"accept\": \"*/*\",\n  \"accept-encoding\": \"gzip, deflate\",\n  \"content-length\": 116\n}\nBody: {\"features\":[\"balcony\",\"sea_view\"],\"category\":\"double\",\"number\":\"5113\",\"floor\":\"6\",\"available\":false,\"price\":\"5590\"}\n\n-----------------------------------------------------------\n\nThe response we got was:\n\nStatus: 401 - Unauthorized\nHeaders: {\n  \"x-powered-by\": \"Express\",\n  \"access-control-allow-origin\": \"*\",\n  \"access-control-allow-headers\": \"Origin, X-Requested-With, Content-Type, Accept\",\n  \"content-type\": \"text/plain; charset=utf-8\",\n  \"content-length\": \"12\",\n  \"etag\": \"W/\\\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\\\"\",\n  \"date\": \"Tue, 11 May 2021 15:30:30 GMT\",\n  \"connection\": \"keep-alive\",\n  \"keep-alive\": \"timeout=5\"\n}\nBody: Unauthorized\n\n\nhttps://on.cypress.io/request\n    at http://localhost:33133/__cypress/runner/cypress_runner.js:139756:21\n    at tryCatcher (http://localhost:33133/__cypress/runner/cypress_runner.js:10791:23)\n    at Promise._settlePromiseFromHandler (http://localhost:33133/__cypress/runner/cypress_runner.js:8726:31)\n    at Promise._settlePromise (http://localhost:33133/__cypress/runner/cypress_runner.js:8783:18)\n    at Promise._settlePromise0 (http://localhost:33133/__cypress/runner/cypress_runner.js:8828:10)\n    at Promise._settlePromises (http://localhost:33133/__cypress/runner/cypress_runner.js:8908:18)\n    at _drainQueueStep (http://localhost:33133/__cypress/runner/cypress_runner.js:5498:12)\n    at _drainQueue (http://localhost:33133/__cypress/runner/cypress_runner.js:5491:9)\n    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (http://localhost:33133/__cypress/runner/cypress_runner.js:5507:5)\n    at Async.drainQueues (http://localhost:33133/__cypress/runner/cypress_runner.js:5377:14)\nFrom Your Spec Code:\n    at Context.eval (http://localhost:33133/__cypress/tests?p=cypress/support/index.js:139:5)",
+                "diff": null
+              },
+              "uuid": "4c3dc507-ec9f-4ef6-807e-2ac7eb7258ef",
+              "parentUUID": "44d3b315-2dea-4f76-81ce-1810114f0f41",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "TC-Create a new room and delete",
+              "fullTitle": "Testing hotel TC-Create a new room and delete",
+              "timedOut": null,
+              "duration": 757,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "clientHelpers.createRoomThenDeleteRequest(cy);",
+              "err": {
+                "message": "CypressError: `cy.request()` failed on:\n\nhttp://localhost:3000/api/room/null\n\nThe response we received from your web server was:\n\n  > 401: Unauthorized\n\nThis was considered a failure because the status code was not `2xx` or `3xx`.\n\nIf you do not want status codes to cause failures pass the option: `failOnStatusCode: false`\n\n-----------------------------------------------------------\n\nThe request we sent was:\n\nMethod: DELETE\nURL: http://localhost:3000/api/room/null\nHeaders: {\n  \"Connection\": \"keep-alive\",\n  \"X-User-Auth\": \"{\\\"username\\\":\\\"tester01\\\",\\\"token\\\":\\\"1985f763716f680c70dd78f94724b478\\\"}\",\n  \"Content-Type\": \"application/json\",\n  \"user-agent\": \"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/7.2.0 Chrome/89.0.4328.0 Electron/12.0.0-beta.14 Safari/537.36\",\n  \"accept\": \"*/*\",\n  \"accept-encoding\": \"gzip, deflate\",\n  \"content-length\": 0\n}\n\n-----------------------------------------------------------\n\nThe response we got was:\n\nStatus: 401 - Unauthorized\nHeaders: {\n  \"x-powered-by\": \"Express\",\n  \"access-control-allow-origin\": \"*\",\n  \"access-control-allow-headers\": \"Origin, X-Requested-With, Content-Type, Accept\",\n  \"content-type\": \"text/plain; charset=utf-8\",\n  \"content-length\": \"12\",\n  \"etag\": \"W/\\\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\\\"\",\n  \"date\": \"Tue, 11 May 2021 15:30:31 GMT\",\n  \"connection\": \"keep-alive\",\n  \"keep-alive\": \"timeout=5\"\n}\nBody: Unauthorized\n\n\nhttps://on.cypress.io/request",
+                "estack": "CypressError: `cy.request()` failed on:\n\nhttp://localhost:3000/api/room/null\n\nThe response we received from your web server was:\n\n  > 401: Unauthorized\n\nThis was considered a failure because the status code was not `2xx` or `3xx`.\n\nIf you do not want status codes to cause failures pass the option: `failOnStatusCode: false`\n\n-----------------------------------------------------------\n\nThe request we sent was:\n\nMethod: DELETE\nURL: http://localhost:3000/api/room/null\nHeaders: {\n  \"Connection\": \"keep-alive\",\n  \"X-User-Auth\": \"{\\\"username\\\":\\\"tester01\\\",\\\"token\\\":\\\"1985f763716f680c70dd78f94724b478\\\"}\",\n  \"Content-Type\": \"application/json\",\n  \"user-agent\": \"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Cypress/7.2.0 Chrome/89.0.4328.0 Electron/12.0.0-beta.14 Safari/537.36\",\n  \"accept\": \"*/*\",\n  \"accept-encoding\": \"gzip, deflate\",\n  \"content-length\": 0\n}\n\n-----------------------------------------------------------\n\nThe response we got was:\n\nStatus: 401 - Unauthorized\nHeaders: {\n  \"x-powered-by\": \"Express\",\n  \"access-control-allow-origin\": \"*\",\n  \"access-control-allow-headers\": \"Origin, X-Requested-With, Content-Type, Accept\",\n  \"content-type\": \"text/plain; charset=utf-8\",\n  \"content-length\": \"12\",\n  \"etag\": \"W/\\\"c-dAuDFQrdjS3hezqxDTNgW7AOlYk\\\"\",\n  \"date\": \"Tue, 11 May 2021 15:30:31 GMT\",\n  \"connection\": \"keep-alive\",\n  \"keep-alive\": \"timeout=5\"\n}\nBody: Unauthorized\n\n\nhttps://on.cypress.io/request\n    at http://localhost:33133/__cypress/runner/cypress_runner.js:139756:21\n    at tryCatcher (http://localhost:33133/__cypress/runner/cypress_runner.js:10791:23)\n    at Promise._settlePromiseFromHandler (http://localhost:33133/__cypress/runner/cypress_runner.js:8726:31)\n    at Promise._settlePromise (http://localhost:33133/__cypress/runner/cypress_runner.js:8783:18)\n    at Promise._settlePromise0 (http://localhost:33133/__cypress/runner/cypress_runner.js:8828:10)\n    at Promise._settlePromises (http://localhost:33133/__cypress/runner/cypress_runner.js:8908:18)\n    at _drainQueueStep (http://localhost:33133/__cypress/runner/cypress_runner.js:5498:12)\n    at _drainQueue (http://localhost:33133/__cypress/runner/cypress_runner.js:5491:9)\n    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (http://localhost:33133/__cypress/runner/cypress_runner.js:5507:5)\n    at Async.drainQueues (http://localhost:33133/__cypress/runner/cypress_runner.js:5377:14)\nFrom Your Spec Code:\n    at Context.eval (http://localhost:33133/__cypress/tests?p=cypress/support/index.js:139:5)",
+                "diff": null
+              },
+              "uuid": "d4764dd0-affb-4f6f-8f0f-a243eebd739a",
+              "parentUUID": "44d3b315-2dea-4f76-81ce-1810114f0f41",
               "isHook": false,
               "skipped": false
             }
           ],
           "suites": [],
           "passes": [
-            "c87db3c1-377f-421b-9e85-b6ae1bed22e0"
+            "ff5c868c-3da1-4f2c-906d-bcdf6a34ec4d"
           ],
-          "failures": [],
+          "failures": [
+            "ccb25d0a-a7d2-4425-9047-8c59ca1af787",
+            "4c3dc507-ec9f-4ef6-807e-2ac7eb7258ef",
+            "d4764dd0-affb-4f6f-8f0f-a243eebd739a"
+          ],
           "pending": [],
           "skipped": [],
-          "duration": 672,
+          "duration": 2905,
           "root": false,
           "rootEmpty": false,
           "_timeout": 2000
