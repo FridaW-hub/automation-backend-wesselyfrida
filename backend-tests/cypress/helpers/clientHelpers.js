@@ -12,14 +12,6 @@ const payload = {
     "price":"4590"
 }
 
-//const payloadChange = {
-//    "features":["balcony","sea_view"],
-//    "category":"double",
-//    "number":"5113",
-//    "floor":"6",
-//    "available":false,
-//    "price":"5590"
-//}
 
 function payloadChange (roomId){
  const   payloadChangeConst = {
